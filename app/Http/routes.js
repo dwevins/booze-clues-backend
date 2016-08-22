@@ -30,4 +30,5 @@ Route.any('/', function * (request, response) {
   });
 });
 
-Route.post('/useres', 'UserController.store');
+Route.post('/users', 'UserController.store');
+Route.post('/token', 'SessionController.store');

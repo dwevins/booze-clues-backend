@@ -1,13 +1,18 @@
 'use strict';
 
+const Hash = use('Hash');
 const User = use('App/Model/User');
 const attributes = ['username', 'email', 'password'];
 
 class UserController {
 
   * store(request, response) {
-    const input = request.jsonApi.getAttributesSnakeCase(attributes);
-    const user = yield User.create(input);
+    const { email, username, password } = request.jsonApi.getAttributesSnakeCase(attributes);
+    const user = yield User.create({
+      email,
+      username,
+      password: yield Hash.make(password),
+    });
 
     response.jsonApi('User', user);
   }
