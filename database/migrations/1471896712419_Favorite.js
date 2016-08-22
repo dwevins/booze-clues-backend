@@ -7,12 +7,9 @@ class FavoriteSchema extends Schema {
   up() {
     this.create('favorites', (table) => {
       table.increments();
-      table.integer('user')
-        .references('id')
-        .inTable('users');
-      table.integer('drink')
-        .references('id')
-        .inTable('drinks');
+      table.integer('user_id').references('users.id');
+      table.integer('drink_id').references('drinks.id');
+      table.timestamps();
     });
   }
 

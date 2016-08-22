@@ -7,13 +7,10 @@ class DrinkSchema extends Schema {
   up() {
     this.create('drinks', (table) => {
       table.increments();
-      table.string('name', 40).notNullable().unique();
-      table.string('recipe', 250).notNullable();
-      table.integer('popularity').defaultTo(0);
-      table.integer('addedBy')
-        .unsigned()
-        .references('id')
-        .inTable('users');
+      table.string('name');
+      table.text('recipe');
+      table.string('photo_url');
+      table.integer('user_id').references('users.id');
       table.timestamps();
     });
   }

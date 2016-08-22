@@ -30,5 +30,9 @@ Route.any('/', function * (request, response) {
   });
 });
 
+Route.resource('/drinks', 'DrinkController').except(['create', 'edit']);
+Route.resource('/ingredients', 'IngredientController').except(['create', 'edit']);
+Route.resource('/favorites', 'FavoriteController').except(['create', 'edit']);
+
 Route.post('/users', 'UserController.store');
 Route.post('/token', 'SessionController.store');
