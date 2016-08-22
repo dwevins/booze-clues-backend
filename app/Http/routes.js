@@ -33,6 +33,9 @@ Route.any('/', function * (request, response) {
 Route.resource('/drinks', 'DrinkController').except(['create', 'edit']);
 Route.resource('/ingredients', 'IngredientController').except(['create', 'edit']);
 Route.resource('/favorites', 'FavoriteController').except(['create', 'edit']);
+Route.resource('/user-cabinets', 'UserCabinetController').except(['create', 'edit']);
+Route.resource('/recipe-ingredients', 'RecipeIngredientController').except(['create', 'edit']);
+Route.resource('/ratings', 'RatingController').except(['create', 'edit']);
 
 Route.post('/users', 'UserController.store');
 Route.post('/token', 'SessionController.store');
