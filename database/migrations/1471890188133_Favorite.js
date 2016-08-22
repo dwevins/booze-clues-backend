@@ -1,21 +1,25 @@
-'use strict'
+'use strict';
 
-const Schema = use('Schema')
+const Schema = use('Schema');
 
 class FavoriteSchema extends Schema {
 
-  up () {
-    this.table('favorite', (table) => {
-      // alter favorite table
-    })
+  up() {
+    this.create('favorites', (table) => {
+      table.increments();
+      table.integer('user')
+        .references('id')
+        .inTable('users');
+      table.integer('drink')
+        .references('id')
+        .inTable('drinks');
+    });
   }
 
-  down () {
-    this.table('favorite', (table) => {
-      // opposite of up goes here
-    })
+  down() {
+    this.drop('favorites');
   }
 
 }
 
-module.exports = FavoriteSchema
+module.exports = FavoriteSchema;

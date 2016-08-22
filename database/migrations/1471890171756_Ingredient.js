@@ -1,21 +1,21 @@
-'use strict'
+'use strict';
 
-const Schema = use('Schema')
+const Schema = use('Schema');
 
 class IngredientSchema extends Schema {
 
-  up () {
-    this.table('ingredient', (table) => {
-      // alter ingredient table
-    })
+  up() {
+    this.create('ingredients', (table) => {
+      table.increments();
+      table.string('name', 100);
+      table.timestamps();
+    });
   }
 
-  down () {
-    this.table('ingredient', (table) => {
-      // opposite of up goes here
-    })
+  down() {
+    this.drop('ingredients');
   }
 
 }
 
-module.exports = IngredientSchema
+module.exports = IngredientSchema;

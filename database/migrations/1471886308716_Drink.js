@@ -8,15 +8,13 @@ class DrinkSchema extends Schema {
     this.create('drinks', (table) => {
       table.increments();
       table.string('name', 40).notNullable().unique();
-      // ingredients array
       table.string('recipe', 250).notNullable();
-      // photos???
       table.integer('popularity').defaultTo(0);
-      table.integer('rating');
       table.integer('addedBy')
         .unsigned()
         .references('id')
         .inTable('users');
+      table.timestamps();
     });
   }
 
