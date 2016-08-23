@@ -2,7 +2,7 @@
 
 const User = use('App/Model/User');
 const E = require('node-exceptions');
-const Hash = use('hash');
+const Hash = use('Hash');
 
 class SessionController {
 
