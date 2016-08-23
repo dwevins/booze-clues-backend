@@ -16,13 +16,28 @@ const makeDrink = (drink) => {
   return Drink.create(attrs);
 };
 
+const getNormalizedIngredientItem = (ingredient) => {
+  const [, name] = ingredient.text.match(/\[(.+)\]/);
+
+  return {
+    addb_id: ingredient.id,
+    name,
+  };
+};
+
+const getNormalizedIngredients = (drink) => drink.ingredients.map(getNormalizedIngredientItem);
+
 class ScrapeController {
   * store(request, response) {
     const key = Env.get('API_KEY');
-    const drinkURL = `http://addb.absolutdrinks.com/drinks/?apiKey=${key}&start=0&pageSize=1024`;
-    const drinkData = yield fetch(drinkURL).then((res) => res.json());
+    const drinkURL = `http://addb.absolutdrinks.com/drinks/alcoholic/?apiKey=${key}&start=0&pageSize=1024`;
 
-    const data = drinkData.result.map(makeDrink);
+    const apiData = yield fetch(drinkURL).then((res) => res.json());
+    const ingredientData = apiData.result.map(getNormalizedIngredients);
+
+    return response.send(ingredientData);
+
+    const data = apiData.result.map(makeDrink);
 
     return response.send(yield data);
   }
