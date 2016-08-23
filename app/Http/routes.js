@@ -30,7 +30,7 @@ Route.any('/', function * (request, response) {
   });
 });
 
-Route.any('/scrape', 'ScrapeController');
+Route.any('/scrape', 'ScrapeController.store');
 
 Route.resource('/drinks', 'DrinkController').except(['create', 'edit']);
 Route.resource('/ingredients', 'IngredientController').except(['create', 'edit']);
