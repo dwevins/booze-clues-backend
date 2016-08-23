@@ -38,4 +38,4 @@ Route.resource('/recipe-ingredients', 'RecipeIngredientController').except(['cre
 Route.resource('/ratings', 'RatingController').except(['create', 'edit']);
 
 Route.post('/users', 'UserController.store');
-Route.post('/token', 'SessionController.store');
+Route.post('/token-auth', 'SessionController.store');
