@@ -29,6 +29,7 @@
     "adonis-middleware": "^1.0.7",
     "pg": "^6.1.0",
     "pg-native": "^1.10.0",
+    "universal-fetch": "0.0.1",
     "youch": "^1.0.1"
   },
   "autoload": {
