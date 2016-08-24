@@ -8,7 +8,7 @@ class IngredientSchema extends Schema {
     this.create('ingredients', (table) => {
       table.increments();
 
-      table.string('addb_id');
+      table.string('addb_id').unique();
       table.string('name');
 
       table.timestamps();

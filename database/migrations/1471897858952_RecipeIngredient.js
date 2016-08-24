@@ -9,8 +9,10 @@ class RecipeIngredientSchema extends Schema {
       table.increments();
       table.integer('drink_id').references('drinks.id');
       table.integer('ingredient_id').references('ingredients.id');
-      table.string('quantity');
-      table.string('measurement');
+      table.integer('quantity');
+      table.string('measure');
+      table.string('addb_measure');
+
       table.timestamps();
     });
   }
