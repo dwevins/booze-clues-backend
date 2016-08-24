@@ -16,26 +16,26 @@ const makeDrink = (drink) => {
     user_id: null,
   };
 
-  drink.ingredients.map((ingredient) => {
-    const ingredientAttrs = {
-      // drink_id: drink.
-      ingredient_id: ingredient.id,
-      quantity: null,
-      measure: null,
-      addb_measure: ingredient.textPlain,
-    };
+  // drink.ingredients.map((ingredient) => {
+  //   const ingredientAttrs = {
+  //     drink_id: drink.id,
+  //     ingredient_id: ingredient.id,
+  //     quantity: null,
+  //     measure: null,
+  //     addb_measure: ingredient.textPlain,
+  //   };
+  //
+  //   RecipeIngredient.create(ingredientAttrs);
+  // });
 
-    RecipeIngredient.create(ingredientAttrs);
-  });
-
-  Drink.makeDrink(drinkAttrs);
+  return Drink.create(drinkAttrs);
 };
 
 const getNormalizedIngredientItem = (ingredient) => {
   const [, name] = ingredient.text.match(/\[(.+)\]/);
 
   return {
-    ing_id: ingredient.id,
+    ingredient_id: ingredient.id,
     name,
   };
 };
@@ -53,16 +53,23 @@ class ScrapeController {
     const ingredientData = _.chain(apiData.result)
       .map(getNormalizedIngredients)
       .flatten()
-      .uniqBy('addb_id')
+      .uniqBy('ingredient_id')
       .value();
 
     const ingredients = yield ingredientData.map((ingredient) => Ingredient.create(ingredient));
 
-    // const drinks = yield apiData.result.map(makeDrink);
-    //
-    const drinks = yield () => {
-      apiData.result.map(makeDrink);
-    };
+    const drinks = yield apiData.result.map(makeDrink);
+
+    const recipeIngredientData = _.chain(apiData.result)
+        .map((drink) => {
+          return drink.ingredients.map((ingredient) => {
+            return Object.assign({ drink_id: drink.id }, ingredient);
+          });
+        })
+        .flatten()
+        .value();
+
+    return response.send(recipeIngredientData);
 
     return response.send({
       drinks,

@@ -9,7 +9,7 @@ class IngredientSchema extends Schema {
       table.increments();
 
       table.string('ingredient_id').unique();
-      table.string('name').unique();
+      table.string('name');
 
       table.timestamps();
     });
