@@ -7,8 +7,8 @@ class RecipeIngredientSchema extends Schema {
   up() {
     this.create('recipe_ingredients', (table) => {
       table.increments();
-      table.integer('drink_id').references('drinks.id');
-      table.integer('ingredient_id').references('ingredients.id');
+      table.string('drink_id').references('drinks.drink_id');
+      table.string('ingredient_id').references('ingredients.ingredient_id');
       table.integer('quantity');
       table.string('measure');
       table.string('addb_measure');

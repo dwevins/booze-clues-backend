@@ -9,6 +9,7 @@ const _ = require('lodash');
 
 const makeDrink = (drink) => {
   const drinkAttrs = {
+    drink_id: drink.id,
     name: drink.name,
     recipe: drink.descriptionPlain,
     photo_url: `http://assets.absolutdrinks.com/drinks/transparent-background-white/${drink.id}.png`,
@@ -34,7 +35,7 @@ const getNormalizedIngredientItem = (ingredient) => {
   const [, name] = ingredient.text.match(/\[(.+)\]/);
 
   return {
-    addb_id: ingredient.id,
+    ing_id: ingredient.id,
     name,
   };
 };
