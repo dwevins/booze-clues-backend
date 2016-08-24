@@ -7,6 +7,16 @@ const RecipeIngredient = use('App/Model/RecipeIngredient');
 const Env = use('Env');
 const _ = require('lodash');
 
+const getValuesForRecipeIngredient = (drinks, ingredients, data) => {
+  const drink = _.find(drinks, { drink_id: data.drink_id });
+  const ingredient = _.find(ingredients, { ingredient_id: data.id });
+  return RecipeIngredient.create({
+    drink_id: drink.id,
+    ingredient_id: ingredient.id,
+    addb_measure: data.textPlain,
+  });
+};
+
 const makeDrink = (drink) => {
   const drinkAttrs = {
     drink_id: drink.id,
@@ -15,18 +25,6 @@ const makeDrink = (drink) => {
     photo_url: `http://assets.absolutdrinks.com/drinks/transparent-background-white/${drink.id}.png`,
     user_id: null,
   };
-
-  // drink.ingredients.map((ingredient) => {
-  //   const ingredientAttrs = {
-  //     drink_id: drink.id,
-  //     ingredient_id: ingredient.id,
-  //     quantity: null,
-  //     measure: null,
-  //     addb_measure: ingredient.textPlain,
-  //   };
-  //
-  //   RecipeIngredient.create(ingredientAttrs);
-  // });
 
   return Drink.create(drinkAttrs);
 };
@@ -60,13 +58,14 @@ class ScrapeController {
 
     const drinks = yield apiData.result.map(makeDrink);
 
-    const recipeIngredientData = _.chain(apiData.result)
+    const recipeIngredientData = yield _.chain(apiData.result)
         .map((drink) => {
           return drink.ingredients.map((ingredient) => {
             return Object.assign({ drink_id: drink.id }, ingredient);
           });
         })
         .flatten()
+        .map((data) => getValuesForRecipeIngredient(drinks, ingredients, data))
         .value();
 
     return response.send(recipeIngredientData);
