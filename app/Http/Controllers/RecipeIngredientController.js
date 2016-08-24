@@ -6,7 +6,7 @@ const attributes = ['quantity', 'measurement'];
 class RecipeIngredientController {
 
   * index(request, response) {
-    const recipeIngredients = yield RecipeIngredient.with('drink_id', 'ingredient_id').fetch();
+    const recipeIngredients = yield RecipeIngredient.all();
 
     response.jsonApi('RecipeIngredient', recipeIngredients);
   }
@@ -14,8 +14,8 @@ class RecipeIngredientController {
   * store(request, response) {
     const input = request.jsonApi.getAttributesSnakeCase(attributes);
     const foreignKeys = {
-      drink_id: drink_id,
-      ingredient_id: ingredient_id,
+      drink_id,
+      ingredient_id,
     };
     const recipeIngredient = yield RecipeIngredient.create(Object.assign({}, input, foreignKeys));
 
@@ -24,7 +24,7 @@ class RecipeIngredientController {
 
   * show(request, response) {
     const id = request.param('id');
-    const recipeIngredient = yield RecipeIngredient.with('drink_id', 'ingredient_id').where({ id }).firstOrFail();
+    const recipeIngredient = yield RecipeIngredient.find(id);
 
     response.jsonApi('RecipeIngredient', recipeIngredient);
   }
@@ -35,11 +35,11 @@ class RecipeIngredientController {
 
     const input = request.jsonApi.getAttributesSnakeCase(attributes);
     const foreignKeys = {
-      drink_id: drink_id,
-      ingredient_id: ingredient_id,
+      drink_id,
+      ingredient_id,
     };
 
-    const recipeIngredient = yield RecipeIngredient.with('drink_id', 'ingredient_id').where({ id }).firstOrFail();
+    const recipeIngredient = yield RecipeIngredient.find(id);
     yield recipeIngredient.update(Object.assign({}, input, foreignKeys));
 
     response.send(recipeIngredient);
@@ -48,7 +48,7 @@ class RecipeIngredientController {
   * destroy(request, response) {
     const id = request.param('id');
 
-    const recipeIngredient = yield RecipeIngredient.query().where({ id }).firstOrFail();
+    const recipeIngredient = yield RecipeIngredient.query().find(id);
     yield recipeIngredient.delete();
 
     response.status(204).send();

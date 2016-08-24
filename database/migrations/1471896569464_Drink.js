@@ -7,6 +7,7 @@ class DrinkSchema extends Schema {
   up() {
     this.create('drinks', (table) => {
       table.increments();
+      table.string('drink_id').unique();
       table.string('name');
       table.text('recipe');
       table.string('photo_url');
