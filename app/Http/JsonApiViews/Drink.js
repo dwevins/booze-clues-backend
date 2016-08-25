@@ -8,6 +8,10 @@ class Drink extends JsonApiView {
   creator() {
     return this.belongsTo('App/Http/JsonApiViews/User', true);
   }
+
+  recipeIngredients() {
+    return this.hasMany('App/Http/JsonApiViews/RecipeIngredient', true);
+  }
 }
 
 module.exports = Drink;

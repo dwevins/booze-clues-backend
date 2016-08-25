@@ -1,6 +1,7 @@
 'use strict';
 
 const Drink = use('App/Model/Drink');
+const RecipeIngredient = use('App/Model/RecipeIngredient');
 const attributes = ['name', 'recipe', 'photo-url'];
 
 class DrinkController {
@@ -9,6 +10,7 @@ class DrinkController {
     const { number, size } = request.input('page') || { number: 1, size: 5 };
 
     const drinks = yield Drink.with('creator').forPage(parseInt(number), parseInt(size)).fetch();
+
 
     response.jsonApi('Drink', drinks);
   }
@@ -25,9 +27,10 @@ class DrinkController {
 
   * show(request, response) {
     const id = request.param('id');
-    const drink = yield Drink.with('creator').where({ id }).firstOrFail();
-
-    response.jsonApi('Drink', drink);
+    const drink = yield Drink.with('creator', 'recipeIngredients', 'recipeIngredients.ingredient')
+      .where({ id }).firstOrFail();
+    response.json(drink);
+    // response.jsonApi('Drink', drink);
   }
 
   * update(request, response) {
