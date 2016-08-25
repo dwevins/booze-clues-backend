@@ -6,7 +6,8 @@ const attributes = ['name'];
 class IngredientController {
 
   * index(request, response) {
-    const ingredients = yield Ingredient.with('recipe_ingredients', 'user_cabinets').fetch();
+    console.log('index');
+    const ingredients = yield Ingredient.with().fetch();
 
     response.jsonApi('Ingredient', ingredients);
   }
