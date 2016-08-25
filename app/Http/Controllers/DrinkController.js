@@ -2,7 +2,6 @@
 
 const Drink = use('App/Model/Drink');
 const RecipeIngredient = use('App/Model/RecipeIngredient');
-const Database = use('Database');
 const attributes = ['name', 'recipe', 'photo-url'];
 
 class DrinkController {
@@ -28,9 +27,10 @@ class DrinkController {
 
   * show(request, response) {
     const id = request.param('id');
-    const drink = yield Drink.with('creator').where({ id }).firstOrFail();
-
-    response.jsonApi('Drink', drink);
+    const drink = yield Drink.with('creator', 'recipeIngredients', 'recipeIngredients.ingredient')
+      .where({ id }).firstOrFail();
+    response.json(drink);
+    // response.jsonApi('Drink', drink);
   }
 
   * update(request, response) {

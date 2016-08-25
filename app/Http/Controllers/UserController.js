@@ -19,7 +19,7 @@ class UserController {
 
   * show(request, response) {
     const id = request.param('id');
-    const user = yield User.with().where({ id }).firstOrFail();
+    const user = yield User.with('favorites').where({ id }).firstOrFail();
 
     response.jsonApi('User', user);
   }
