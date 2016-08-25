@@ -8,6 +8,7 @@ class DrinkController {
   * index(request, response) {
     const drinks = yield Drink.with('creator').fetch();
 
+
     response.jsonApi('Drink', drinks);
   }
 

@@ -23,7 +23,7 @@ class IngredientController {
 
   * show(request, response) {
     const id = request.param('id');
-    const ingredient = yield Ingredient.with('recipe_ingredients', 'user_cabinets').where({ id }).firstOrFail();
+    const ingredient = yield Ingredient.with().where({ id }).firstOrFail();
 
     response.jsonApi('Ingredient', ingredient);
   }
