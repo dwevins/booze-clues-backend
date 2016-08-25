@@ -22,7 +22,7 @@ const makeDrink = (drink) => {
     drink_id: drink.id,
     name: drink.name,
     recipe: drink.descriptionPlain,
-    photo_url: `http://assets.absolutdrinks.com/drinks/transparent-background-white/${drink.id}.png`,
+    photo_url: `http://assets.absolutdrinks.com/drinks/solid-background-white/soft-shadow/floor-reflection/600x800/${drink.id}(80).jpg`,
     user_id: null,
   };
 
