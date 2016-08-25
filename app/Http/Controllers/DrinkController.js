@@ -27,7 +27,8 @@ class DrinkController {
   }
 
   * show(request, response) {
-    const id = request.param('id'); const drink = yield Drink.with('creator').where({ id }).firstOrFail();
+    const id = request.param('id');
+    const drink = yield Drink.with('creator').where({ id }).firstOrFail();
 
     response.jsonApi('Drink', drink);
   }
