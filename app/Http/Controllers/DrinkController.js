@@ -1,7 +1,6 @@
 'use strict';
 
 const Drink = use('App/Model/Drink');
-const RecipeIngredient = use('App/Model/RecipeIngredient');
 const attributes = ['name', 'recipe', 'photo-url'];
 
 class DrinkController {
@@ -9,14 +8,19 @@ class DrinkController {
   * index(request, response) {
     const { number, size } = request.input('page') || { number: 1, size: 5 };
     const name = request.input('name');
-
-    const drinks = yield Drink.with('creator')
+    if (!name) {
+      const drinks = yield Drink.with('creator')
+        .orderBy('name', 'asc')
+        .forPage(parseInt(number), parseInt(size))
+        .fetch();
+      response.jsonApi('Drink', drinks);
+    } else {
+      const drinks = yield Drink.with('creator')
       .where('name', 'ilike', `%${name}%`)
       .forPage(parseInt(number), parseInt(size))
       .fetch();
-
-
-    response.jsonApi('Drink', drinks);
+      response.jsonApi('Drink', drinks);
+    }
   }
 
   * store(request, response) {
@@ -33,8 +37,7 @@ class DrinkController {
     const id = request.param('id');
     const drink = yield Drink.with('creator', 'recipeIngredients', 'recipeIngredients.ingredient')
       .where({ id }).firstOrFail();
-    response.json(drink);
-    // response.jsonApi('Drink', drink);
+    response.jsonApi('Drink', drink);
   }
 
   * update(request, response) {
