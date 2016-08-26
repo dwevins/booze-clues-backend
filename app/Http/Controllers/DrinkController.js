@@ -8,8 +8,12 @@ class DrinkController {
 
   * index(request, response) {
     const { number, size } = request.input('page') || { number: 1, size: 5 };
+    const name = request.input('name');
 
-    const drinks = yield Drink.with('creator').forPage(parseInt(number), parseInt(size)).fetch();
+    const drinks = yield Drink.with('creator')
+      .where('name', 'ilike', `%${name}%`)
+      .forPage(parseInt(number), parseInt(size))
+      .fetch();
 
 
     response.jsonApi('Drink', drinks);
