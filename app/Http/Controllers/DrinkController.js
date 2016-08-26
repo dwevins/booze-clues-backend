@@ -7,14 +7,21 @@ const attributes = ['name', 'recipe', 'photo-url'];
 class DrinkController {
 
   * index(request, response) {
-    // use to show all drinks, drinks by search term, or drinks by ingredient set
-
     const { number, size } = request.input('page') || { number: 1, size: 5 };
-
-    const drinks = yield Drink.with('creator').forPage(parseInt(number), parseInt(size)).fetch();
-
-
-    response.jsonApi('Drink', drinks);
+    const name = request.input('name');
+    if (!name) {
+      const drinks = yield Drink.with('creator')
+        .orderBy('name', 'asc')
+        .forPage(parseInt(number), parseInt(size))
+        .fetch();
+      response.jsonApi('Drink', drinks);
+    } else {
+      const drinks = yield Drink.with('creator')
+      .where('name', 'ilike', `%${name}%`)
+      .forPage(parseInt(number), parseInt(size))
+      .fetch();
+      response.jsonApi('Drink', drinks);
+    }
   }
 
   * store(request, response) {
