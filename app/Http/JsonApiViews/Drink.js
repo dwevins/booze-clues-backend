@@ -6,11 +6,17 @@ class Drink extends JsonApiView {
   }
 
   creator() {
-    return this.belongsTo('App/Http/JsonApiViews/User', true);
+    return this.belongsTo('App/Http/JsonApiViews/User', {
+      included: true,
+      excludeRelation: 'drinks',
+    });
   }
 
   recipeIngredients() {
-    return this.hasMany('App/Http/JsonApiViews/RecipeIngredient', true);
+    return this.hasMany('App/Http/JsonApiViews/RecipeIngredient', {
+      included: true,
+      excludeRelation: 'drink',
+    });
   }
 }
 
