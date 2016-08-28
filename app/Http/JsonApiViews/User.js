@@ -5,9 +5,11 @@ class User extends JsonApiView {
     return ['username', 'email'];
   }
 
-  favorites() {
-    return this.hasMany('App/JsonApiViews/Favorite', true);
-  }
+  // favorites() {
+  //   return this.hasMany('App/Http/JsonApiViews/Favorite', {
+  //     included: false,
+  //   });
+  // }
 }
 
 module.exports = User;

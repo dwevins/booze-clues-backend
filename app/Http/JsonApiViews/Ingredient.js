@@ -5,11 +5,11 @@ class Ingredient extends JsonApiView {
     return ['name'];
   }
 
-  recipe_ingredients() {
+  recipeIngredients() {
     return this.hasMany('App/Http/JsonApiViews/RecipeIngredient', true);
   }
 
-  user_cabinets() {
+  userCabinets() {
     return this.hasMany('App/Http/JsonApiViews/UserCabinet', true);
   }
 }

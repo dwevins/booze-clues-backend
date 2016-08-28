@@ -9,13 +9,13 @@ class DrinkController {
     const { number, size } = request.input('page') || { number: 1, size: 5 };
     const name = request.input('name');
     if (!name) {
-      const drinks = yield Drink.with('creator')
+      const drinks = yield Drink.with('creator', 'recipeIngredients.ingredient')
         .orderBy('name', 'asc')
         .forPage(parseInt(number), parseInt(size))
         .fetch();
       response.jsonApi('Drink', drinks);
     } else {
-      const drinks = yield Drink.with('creator')
+      const drinks = yield Drink.with('creator', 'recipeIngredients.ingredient')
       .where('name', 'ilike', `%${name}%`)
       .forPage(parseInt(number), parseInt(size))
       .fetch();
