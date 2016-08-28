@@ -8,12 +8,28 @@ class DrinkController {
   * index(request, response) {
     const { number, size } = request.input('page') || { number: 1, size: 5 };
     const name = request.input('name');
-    if (!name) {
+    const ingredients = request.input('ingredients');
+
+    if (!name && !ingredients) {
       const drinks = yield Drink.with('creator')
         .orderBy('name', 'asc')
         .forPage(parseInt(number), parseInt(size))
         .fetch();
       response.jsonApi('Drink', drinks);
+    } else if (name && !ingredients) {
+      // const ingredientsArray = ???
+      // needs to split list of ingredients into an array
+      // ??? how does the string appear in the request?
+      // ??? what can I use as a delimiter?
+      const drinks = yield Drink.with('creator')
+        .orderBy('name', 'asc')
+        .forPage(parseInt(number), parseInt(size))
+        // .where(???)
+        // needs to check all drinks for ingredients from ingredientsArray
+        // should return all drinks containing any ingredient from ingredientsArray
+        // ??? how to make drinks with most ingredient matches show first?
+        //
+        .fetch;
     } else {
       const drinks = yield Drink.with('creator')
       .where('name', 'ilike', `%${name}%`)
