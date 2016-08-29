@@ -9,11 +9,7 @@ class DrinkController {
     const { number, size } = request.input('page') || { number: 1, size: 5 };
     const name = request.input('name') || undefined;
     const ingredients = request.input('ingredients') || undefined;
-    // response.send(ingredients);
-
-    // if (ingredients) {
-    //   const ingredientsString = ingredients.split(',');
-    // }
+    console.log(ingredients);
 
     if (!name) {
       if (ingredients) {
