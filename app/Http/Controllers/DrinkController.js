@@ -1,6 +1,7 @@
 'use strict';
 
 const Drink = use('App/Model/Drink');
+const RecipeIngredient = use('App/Model/RecipeIngredient');
 const attributes = ['name', 'recipe', 'photo-url'];
 
 class DrinkController {
@@ -13,14 +14,22 @@ class DrinkController {
 
     if (!name) {
       if (ingredients) {
-        const drinks = yield Drink.with('creator', 'recipeIngredients.ingredient')
+        const Database = use('Database');
+        const subQuery =  Database
+          .from('recipe_ingredients')
+          .whereNotIn('ingredient_id', ingredients)
+          .select('id');
+
+        const drinks = Drink.with('creator', 'recipeIngredients.ingredient')
           .select('drinks.*')
           .join('recipe_ingredients', 'drinks.id', 'recipe_ingredients.drink_id')
-          .join('ingredients', 'recipe_ingredients.ingredient_id', 'ingredients.id')
-          .whereIn('ingredients.id', ingredients)
+          .whereNotIn('recipe_ingredients.id', subQuery)
+          .groupBy('drinks.id')
           .forPage(parseInt(number), parseInt(size))
-          .fetch();
+          // .fetch();
+          .toSQL().sql;
           // needs to show full matches only
+        response.send(drinks);
 
         response.jsonApi('Drink', drinks);
       } else {
