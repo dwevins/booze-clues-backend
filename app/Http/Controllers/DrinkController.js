@@ -20,6 +20,7 @@ class DrinkController {
           .whereIn('ingredients.id', ingredients)
           .forPage(parseInt(number), parseInt(size))
           .fetch();
+          // needs to show full matches only
 
         response.jsonApi('Drink', drinks);
       } else {
