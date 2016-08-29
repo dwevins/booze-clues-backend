@@ -9,15 +9,21 @@ class DrinkController {
     const { number, size } = request.input('page') || { number: 1, size: 5 };
     const name = request.input('name') || undefined;
     const ingredients = request.input('ingredients') || undefined;
+    // response.send(ingredients);
+
+    // if (ingredients) {
+    //   const ingredientsString = ingredients.split(',');
+    // }
 
     if (!name) {
       if (ingredients) {
-        const drinks = yield Drink.with('creator', 'recipeIngredients')
-        .where('recipe', 'ilike', `%${ingredients}%`)
-        .forPage(parseInt(number), parseInt(size))
-        .fetch();
-
-        console.log('---ingredients---');
+        const drinks = yield Drink.with('creator', 'recipeIngredients.ingredient')
+          .select('drinks.*')
+          .join('recipe_ingredients', 'drinks.id', 'recipe_ingredients.drink_id')
+          .join('ingredients', 'recipe_ingredients.ingredient_id', 'ingredients.id')
+          .whereIn('ingredients.id', ingredients)
+          .forPage(parseInt(number), parseInt(size))
+          .fetch();
 
         response.jsonApi('Drink', drinks);
       } else {
@@ -26,8 +32,6 @@ class DrinkController {
           .forPage(parseInt(number), parseInt(size))
           .fetch();
 
-        console.log('---no name---');
-
         response.jsonApi('Drink', drinks);
       }
     } else {
@@ -35,8 +39,6 @@ class DrinkController {
       .where('name', 'ilike', `%${name}%`)
       .forPage(parseInt(number), parseInt(size))
       .fetch();
-
-      console.log('---name---');
 
       response.jsonApi('Drink', drinks);
     }
