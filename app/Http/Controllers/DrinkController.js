@@ -1,24 +1,50 @@
 'use strict';
 
 const Drink = use('App/Model/Drink');
+const RecipeIngredient = use('App/Model/RecipeIngredient');
 const attributes = ['name', 'recipe', 'photo-url'];
 
 class DrinkController {
 
   * index(request, response) {
     const { number, size } = request.input('page') || { number: 1, size: 5 };
-    const name = request.input('name');
+    const name = request.input('name') || undefined;
+    const ingredients = request.input('ingredients') || undefined;
+
+
     if (!name) {
-      const drinks = yield Drink.with('creator', 'recipeIngredients.ingredient')
-        .orderBy('name', 'asc')
-        .forPage(parseInt(number), parseInt(size))
-        .fetch();
-      response.jsonApi('Drink', drinks);
+      if (ingredients) {
+        const Database = use('Database');
+        const subQuery =  Database
+          .from('recipe_ingredients')
+          .whereNotIn('ingredient_id', ingredients.split(','))
+          .select('drink_id');
+
+        const drinks = yield Drink.with('creator', 'recipeIngredients.ingredient')
+          .select('drinks.*')
+          .join('recipe_ingredients', 'drinks.id', 'recipe_ingredients.drink_id')
+          .whereNotIn('recipe_ingredients.drink_id', subQuery)
+          .groupBy('drinks.id')
+          .forPage(parseInt(number), parseInt(size))
+          .fetch();
+          // .toSQL().sql;
+          // needs to show full matches only
+
+        response.jsonApi('Drink', drinks);
+      } else {
+        const drinks = yield Drink.with('creator', 'recipeIngredients.ingredient')
+          .orderBy('name', 'asc')
+          .forPage(parseInt(number), parseInt(size))
+          .fetch();
+
+        response.jsonApi('Drink', drinks);
+      }
     } else {
       const drinks = yield Drink.with('creator', 'recipeIngredients.ingredient')
       .where('name', 'ilike', `%${name}%`)
       .forPage(parseInt(number), parseInt(size))
       .fetch();
+
       response.jsonApi('Drink', drinks);
     }
   }
