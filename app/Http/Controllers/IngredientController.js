@@ -6,10 +6,21 @@ const attributes = ['name'];
 class IngredientController {
 
   * index(request, response) {
-    console.log('index');
-    const ingredients = yield Ingredient.with().fetch();
-
-    response.jsonApi('Ingredient', ingredients);
+    const { number, size } = request.input('page') || { number: 1, size: 5 };
+    const name = request.input('name');
+    if (!name) {
+      const ingredients = yield Ingredient.with('recipeIngredients.drink')
+        .orderBy('name', 'asc')
+        .forPage(parseInt(number), parseInt(size))
+        .fetch();
+      response.jsonApi('Ingredient', ingredients);
+    } else {
+      const ingredients = yield Ingredient.with('recipeIngredients.drink')
+      .where('name', 'ilike', `%${name}%`)
+      .forPage(parseInt(number), parseInt(size))
+      .fetch();
+      response.jsonApi('Ingredient', ingredients);
+    }
   }
 
   * store(request, response) {
@@ -23,7 +34,7 @@ class IngredientController {
 
   * show(request, response) {
     const id = request.param('id');
-    const ingredient = yield Ingredient.with().where({ id }).firstOrFail();
+    const ingredient = yield Ingredient.with('recipeIngredients.drink').where({ id }).firstOrFail();
 
     response.jsonApi('Ingredient', ingredient);
   }
@@ -36,7 +47,8 @@ class IngredientController {
     const foreignKeys = {
     };
 
-    const ingredient = yield Ingredient.with('recipe_ingredients', 'user_cabinets').where({ id }).firstOrFail();
+    const ingredient = yield Ingredient.with('recipeIngredients.drink', 'user_cabinets')
+      .where({ id }).firstOrFail();
     yield ingredient.update(Object.assign({}, input, foreignKeys));
 
     response.send(ingredient);
