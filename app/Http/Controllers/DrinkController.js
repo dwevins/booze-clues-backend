@@ -7,18 +7,41 @@ class DrinkController {
 
   * index(request, response) {
     const { number, size } = request.input('page') || { number: 1, size: 5 };
-    const name = request.input('name');
-    if (!name) {
+    const name = request.input('name') || undefined;
+    const ingredients = request.input('ingredients') || undefined;
+
+    console.log('name: ', name);
+    console.log('ingredients: ', ingredients);
+    console.log('number: ', number);
+    console.log('size: ', size);
+
+    if (!name && !ingredients) {
       const drinks = yield Drink.with('creator', 'recipeIngredients.ingredient')
         .orderBy('name', 'asc')
         .forPage(parseInt(number), parseInt(size))
         .fetch();
+
+      console.log('no name');
+
       response.jsonApi('Drink', drinks);
-    } else {
+    } else if (name) {
       const drinks = yield Drink.with('creator', 'recipeIngredients.ingredient')
       .where('name', 'ilike', `%${name}%`)
       .forPage(parseInt(number), parseInt(size))
       .fetch();
+
+      console.log('name');
+
+      response.jsonApi('Drink', drinks);
+    }  else if (ingredients) {
+      const drinks = yield Drink.with('creator', 'recipeIngredients');
+      response.jsonApi('Drink', drinks)
+      .where('recipe', 'ilike', `%${ingredients}%`)
+      .forPage(parseInt(number), parseInt(size))
+      .fetch();
+
+      console.log('ingredients');
+
       response.jsonApi('Drink', drinks);
     }
   }
