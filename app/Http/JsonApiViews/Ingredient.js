@@ -6,11 +6,17 @@ class Ingredient extends JsonApiView {
   }
 
   recipeIngredients() {
-    return this.hasMany('App/Http/JsonApiViews/RecipeIngredient', true);
+    return this.hasMany('App/Http/JsonApiViews/RecipeIngredient', {
+      included: false,
+      excludeRelation: 'ingredient',
+    });
   }
 
   userCabinets() {
-    return this.hasMany('App/Http/JsonApiViews/UserCabinet', true);
+    return this.hasMany('App/Http/JsonApiViews/UserCabinet', {
+      included: false,
+      excludeRelation: 'ingredient',
+    });
   }
 }
 

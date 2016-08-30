@@ -15,7 +15,7 @@ class IngredientController {
         .fetch();
       response.jsonApi('Ingredient', ingredients);
     } else {
-      const ingredients = yield Ingredient.with('recipeIngredients.drink')
+      const ingredients = yield Ingredient.with('recipeIngredients')
       .where('name', 'ilike', `%${name}%`)
       .forPage(parseInt(number), parseInt(size))
       .fetch();
