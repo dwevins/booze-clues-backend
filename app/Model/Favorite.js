@@ -1,6 +1,6 @@
-'use strict'
+'use strict';
 
-const Lucid = use('Lucid')
+const Lucid = use('Lucid');
 
 class Favorite extends Lucid {
 
@@ -13,4 +13,4 @@ class Favorite extends Lucid {
   }
 }
 
-module.exports = Favorite
+module.exports = Favorite;

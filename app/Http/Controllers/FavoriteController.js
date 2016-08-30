@@ -17,10 +17,11 @@ class FavoriteController {
     const attrs = yield request.jsonApi.getAttributesSnakeCase(attributes);
     console.log(attrs);
     const foreignKeys = {
-      user_id,
-      drink_id,
+      user_id: request.authUser.id,
+      drink_id: request.input('data.relationships.drink.data.id'),
     };
     const favorite = yield Favorite.create(Object.assign({}, attrs, foreignKeys));
+    yield favorite.related('user').load();
 
     response.jsonApi('Favorite', favorite);
   }

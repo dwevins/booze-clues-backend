@@ -34,7 +34,9 @@ Route.any('/scrape', 'ScrapeController.store');
 
 Route.resource('/drinks', 'DrinkController').except(['create', 'edit']);
 Route.resource('/ingredients', 'IngredientController').except(['create', 'edit']);
-Route.resource('/favorites', 'FavoriteController').except(['create', 'edit']);
+
+Route.resource('/favorites', 'FavoriteController').except(['create', 'edit']).middleware('auth');
+
 Route.resource('/user-cabinets', 'UserCabinetController').except(['create', 'edit']);
 Route.resource('/recipe-ingredients', 'RecipeIngredientController').except(['create', 'edit']);
 Route.resource('/ratings', 'RatingController').except(['create', 'edit']);
