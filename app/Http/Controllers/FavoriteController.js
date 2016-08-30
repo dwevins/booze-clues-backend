@@ -1,6 +1,7 @@
 'use strict';
 
 const Favorite = use('App/Model/Favorite');
+const Drink = use('App/Model/Drink');
 
 class FavoriteController {
 
@@ -22,10 +23,15 @@ class FavoriteController {
   }
 
   * show(request, response) {
-    const id = request.param('id');
-    const favorite = yield Favorite.with('user', 'drink').where({ id }).firstOrFail();
+    const userID = request.param('id');
+    // const favorite = yield Favorite.with('user', 'drink').where({ userID }).firstOrFail();
+    const favorite = yield Drink.with('creator', 'recipe_ingredients.ingredient')
+      .select('drinks.*')
+      .join('favorites', 'drinks.id', 'favorites.drink_id')
+      .where('favorites.user_id', `${userID}`)
+      .orderBy('favorites.created_at', 'desc');
 
-    response.jsonApi('Favorite', favorite);
+    response.jsonApi('Drink', favorite);
   }
 
   * update(request, response) {
