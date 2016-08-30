@@ -31,7 +31,7 @@ class FavoriteController {
       .where('favorites.user_id', `${userID}`)
       .orderBy('favorites.created_at', 'desc');
 
-    response.jsonApi('Favorite', favorite);
+    response.jsonApi('Drink', favorite);
   }
 
   * update(request, response) {
