@@ -2,6 +2,7 @@
 
 const Favorite = use('App/Model/Favorite');
 const Drink = use('App/Model/Drink');
+const attributes = ['user', 'drink'];
 
 class FavoriteController {
 
@@ -12,12 +13,15 @@ class FavoriteController {
   }
 
   * store(request, response) {
-    const input = request.jsonApi.getAttributesSnakeCase(attributes);
+    console.log('time to store!');
+    const attrs = yield request.jsonApi.getAttributesSnakeCase(attributes);
+    console.log(attrs);
     const foreignKeys = {
-      user_id: user,
-      drink_id: drink,
+      user_id: request.authUser.id,
+      drink_id: request.input('data.relationships.drink.data.id'),
     };
-    const favorite = yield Favorite.create(Object.assign({}, input, foreignKeys));
+    const favorite = yield Favorite.create(Object.assign({}, attrs, foreignKeys));
+    yield favorite.related('user').load();
 
     response.jsonApi('Favorite', favorite);
   }
@@ -28,8 +32,7 @@ class FavoriteController {
     const favorite = yield Drink.with('creator', 'recipe_ingredients.ingredient')
       .select('drinks.*')
       .join('favorites', 'drinks.id', 'favorites.drink_id')
-      .where('favorites.user_id', `${userID}`)
-      .orderBy('favorites.created_at', 'desc');
+      .where('favorites.user_id', `${userID}`);
 
     response.jsonApi('Drink', favorite);
   }
