@@ -28,7 +28,7 @@ class FavoriteController {
     const favorite = yield Drink.with('creator', 'recipe_ingredients.ingredient')
       .select('drinks.*')
       .join('favorites', 'drinks.id', 'favorites.drink_id')
-      .where('favorites.user_id', `%${userID}%`)
+      .where('favorites.user_id', `${userID}`)
       .orderBy('favorites.created_at', 'desc');
 
     response.jsonApi('Favorite', favorite);
