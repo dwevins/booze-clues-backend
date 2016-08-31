@@ -20,7 +20,7 @@ class DrinkController {
           .whereNotIn('ingredient_id', ingredients.split(','))
           .select('drink_id');
 
-        const drinks = yield Drink.with('creator', 'recipeIngredients.ingredient')
+        const drinks = yield Drink.loadRelations(Drink, request.authUser)
           .select('drinks.*')
           .join('recipe_ingredients', 'drinks.id', 'recipe_ingredients.drink_id')
           .whereNotIn('recipe_ingredients.drink_id', subQuery)
@@ -32,7 +32,7 @@ class DrinkController {
 
         response.jsonApi('Drink', drinks);
       } else {
-        const drinks = yield Drink.with('creator', 'recipeIngredients.ingredient')
+        const drinks = yield Drink.loadRelations(Drink)
           .orderBy('name', 'asc')
           .forPage(parseInt(number), parseInt(size))
           .fetch();
@@ -40,7 +40,7 @@ class DrinkController {
         response.jsonApi('Drink', drinks);
       }
     } else {
-      const drinks = yield Drink.with('creator', 'recipeIngredients.ingredient')
+      const drinks = yield Drink.loadRelations(Drink, request.authUser)
       .where('name', 'ilike', `%${name}%`)
       .forPage(parseInt(number), parseInt(size))
       .fetch();
@@ -61,7 +61,7 @@ class DrinkController {
 
   * show(request, response) {
     const id = request.param('id');
-    const drink = yield Drink.with('creator', 'recipeIngredients', 'recipeIngredients.ingredient')
+    const drink = yield Drink.loadRelations(Drink, request.currentUser)
       .where({ id }).firstOrFail();
     response.jsonApi('Drink', drink);
   }
