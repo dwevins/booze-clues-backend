@@ -7,17 +7,11 @@ const attributes = ['user', 'drink'];
 class FavoriteController {
 
   * index(request, response) {
-    console.log('index');
-    // const favorites = yield Favorite.with('user', 'drink').fetch();
-    //
-    // response.jsonApi('Favorite', favorites);
-    const userID = request.authUser.id;
-    const favorite = yield Drink.with('creator', 'recipe_ingredients.ingredient')
-      .select('drinks.*')
-      .join('favorites', 'drinks.id', 'favorites.drink_id')
+    const userID = request.currentUser.id;
+    const favorites = yield Favorite.with('drink.recipeIngredients.ingredient')
       .where('favorites.user_id', `${userID}`);
 
-    response.jsonApi('Drink', favorite);
+    response.jsonApi('Favorite', favorites);
   }
 
   * store(request, response) {
@@ -44,11 +38,8 @@ class FavoriteController {
   }
 
   * show(request, response) {
-    const userID = request.authUser.id;
-    const drinkID = request.param('id');
-    const favorite = yield Favorite.query()
-      .where('favorites.user_id', `${userID}`)
-      .where('favorites.drink_id', `${drinkID}`);
+    const id = request.param('id');
+    const favorite = yield Favorite.with('drink').where({ id }).firstOrFail();
 
     response.jsonApi('Favorite', favorite);
   }
@@ -70,6 +61,7 @@ class FavoriteController {
   }
 
   * destroy(request, response) {
+    console.log('destroy');
     const id = request.param('id');
 
     const favorite = yield Favorite.query().where({ id }).firstOrFail();

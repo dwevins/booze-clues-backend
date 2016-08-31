@@ -18,6 +18,13 @@ class Drink extends JsonApiView {
       excludeRelation: 'drink',
     });
   }
+
+  favorites() {
+    return this.hasMany('App/Http/JsonApiViews/Favorite', {
+      included: false,
+      excludeRelation: 'drink',
+    });
+  }
 }
 
 module.exports = Drink;
