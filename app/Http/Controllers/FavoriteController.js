@@ -13,17 +13,26 @@ class FavoriteController {
   }
 
   * store(request, response) {
-    console.log('time to store!');
     const attrs = yield request.jsonApi.getAttributesSnakeCase(attributes);
-    console.log(attrs);
+
     const foreignKeys = {
       user_id: request.authUser.id,
       drink_id: request.input('data.relationships.drink.data.id'),
     };
-    const favorite = yield Favorite.create(Object.assign({}, attrs, foreignKeys));
-    yield favorite.related('user').load();
 
-    response.jsonApi('Favorite', favorite);
+
+    const duplicateCheckTable = yield Favorite.with()
+      .where('favorites.user_id', `${foreignKeys.user_id}`)
+      .where('favorites.drink_id', `${foreignKeys.drink_id}`);
+
+    if (duplicateCheckTable.length != 0) {
+      response.conflict('You have already favorited this drink');
+    } else {
+      const favorite = yield Favorite.create(Object.assign({}, attrs, foreignKeys));
+      yield favorite.related('user').load();
+
+      response.jsonApi('Favorite', favorite);
+    }
   }
 
   * show(request, response) {
@@ -43,8 +52,8 @@ class FavoriteController {
 
     const input = request.jsonApi.getAttributesSnakeCase(attributes);
     const foreignKeys = {
-      user_id: user,
-      drink_id: drink,
+      user_id: request.authUser.id,
+      drink_id: request.input('data.relationships.drink.data.id'),
     };
 
     const favorite = yield Favorite.with('user', 'drink').where({ id }).firstOrFail();
