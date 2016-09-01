@@ -8,7 +8,9 @@ class FavoriteController {
   * index(request, response) {
     const userID = request.currentUser.id;
     const favorites = yield Favorite.with('drink.recipeIngredients.ingredient')
-      .where('favorites.user_id', `${userID}`);
+      .where('favorites.user_id', `${userID}`)
+      .fetch();
+
 
     response.jsonApi('Favorite', favorites);
   }
