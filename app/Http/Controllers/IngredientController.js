@@ -6,9 +6,21 @@ const attributes = ['name'];
 class IngredientController {
 
   * index(request, response) {
-    const ingredients = yield Ingredient.with().fetch();
-
-    response.jsonApi('Ingredient', ingredients);
+    const { number, size } = request.input('page') || { number: 1, size: 5 };
+    const name = request.input('name');
+    if (!name) {
+      const ingredients = yield Ingredient.with('recipeIngredients.drink')
+        .orderBy('name', 'asc')
+        .forPage(parseInt(number), parseInt(size))
+        .fetch();
+      response.jsonApi('Ingredient', ingredients);
+    } else {
+      const ingredients = yield Ingredient.with('recipeIngredients')
+      .where('name', 'ilike', `%${name}%`)
+      .forPage(parseInt(number), parseInt(size))
+      .fetch();
+      response.jsonApi('Ingredient', ingredients);
+    }
   }
 
   * store(request, response) {
