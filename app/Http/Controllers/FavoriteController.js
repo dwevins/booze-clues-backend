@@ -1,7 +1,6 @@
 'use strict';
 
 const Favorite = use('App/Model/Favorite');
-const Drink = use('App/Model/Drink');
 const attributes = ['user', 'drink'];
 
 class FavoriteController {
@@ -61,7 +60,6 @@ class FavoriteController {
   }
 
   * destroy(request, response) {
-    console.log('destroy');
     const id = request.param('id');
 
     const favorite = yield Favorite.query().where({ id }).firstOrFail();
