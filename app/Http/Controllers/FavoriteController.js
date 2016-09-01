@@ -2,36 +2,46 @@
 
 const Favorite = use('App/Model/Favorite');
 const Drink = use('App/Model/Drink');
+const attributes = ['user', 'drink'];
 
 class FavoriteController {
 
   * index(request, response) {
-    const favorites = yield Favorite.with('user', 'drink').fetch();
+    const userID = request.currentUser.id;
+    const favorites = yield Favorite.with('drink.recipeIngredients.ingredient')
+      .where('favorites.user_id', `${userID}`);
 
     response.jsonApi('Favorite', favorites);
   }
 
   * store(request, response) {
-    const input = request.jsonApi.getAttributesSnakeCase(attributes);
-    const foreignKeys = {
-      user_id: user,
-      drink_id: drink,
-    };
-    const favorite = yield Favorite.create(Object.assign({}, input, foreignKeys));
+    const attrs = yield request.jsonApi.getAttributesSnakeCase(attributes);
 
-    response.jsonApi('Favorite', favorite);
+    const foreignKeys = {
+      user_id: request.authUser.id,
+      drink_id: request.input('data.relationships.drink.data.id'),
+    };
+
+
+    const duplicateCheckTable = yield Favorite.with()
+      .where('favorites.user_id', `${foreignKeys.user_id}`)
+      .where('favorites.drink_id', `${foreignKeys.drink_id}`);
+
+    if (duplicateCheckTable.length != 0) {
+      response.conflict('You have already favorited this drink');
+    } else {
+      const favorite = yield Favorite.create(Object.assign({}, attrs, foreignKeys));
+      yield favorite.related('user').load();
+
+      response.jsonApi('Favorite', favorite);
+    }
   }
 
   * show(request, response) {
-    const userID = request.param('id');
-    // const favorite = yield Favorite.with('user', 'drink').where({ userID }).firstOrFail();
-    const favorite = yield Drink.with('creator', 'recipe_ingredients.ingredient')
-      .select('drinks.*')
-      .join('favorites', 'drinks.id', 'favorites.drink_id')
-      .where('favorites.user_id', `${userID}`)
-      .orderBy('favorites.created_at', 'desc');
+    const id = request.param('id');
+    const favorite = yield Favorite.with('drink').where({ id }).firstOrFail();
 
-    response.jsonApi('Drink', favorite);
+    response.jsonApi('Favorite', favorite);
   }
 
   * update(request, response) {
@@ -40,8 +50,8 @@ class FavoriteController {
 
     const input = request.jsonApi.getAttributesSnakeCase(attributes);
     const foreignKeys = {
-      user_id: user,
-      drink_id: drink,
+      user_id: request.authUser.id,
+      drink_id: request.input('data.relationships.drink.data.id'),
     };
 
     const favorite = yield Favorite.with('user', 'drink').where({ id }).firstOrFail();
@@ -51,6 +61,7 @@ class FavoriteController {
   }
 
   * destroy(request, response) {
+    console.log('destroy');
     const id = request.param('id');
 
     const favorite = yield Favorite.query().where({ id }).firstOrFail();
